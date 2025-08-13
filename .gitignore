@@ -1,0 +1,24 @@
+# Ignore environment and sensitive files
+.env
+secure_config.php
+config/config.php
+GPT/config/config.php
+
+# Ignore uploads and generated files
+public/uploads/
+
+# Ignore vendor dependencies (if using Composer)
+vendor/
+
+# Ignore IDE and OS files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignore backup and SQL files
+*.sql
+*.zip
+
+# Ignore node_modules (if any)
+node_modules/

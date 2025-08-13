@@ -1,0 +1,5 @@
+# /public/uploads/.htaccess
+Options -Indexes
+<FilesMatch "\.(php|pl|py|sh|rb)$">
+    Deny from all
+</FilesMatch>
