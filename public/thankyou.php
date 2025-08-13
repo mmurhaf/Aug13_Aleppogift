@@ -6,7 +6,8 @@ require_once('../includes/email_notifier.php');
 require_once('../includes/send_email.php');
 require_once('../includes/whatsapp_notify.php');
 
-$db = new Database();
+$config = require(__DIR__ . '/../secure_config.php');
+$db = new Database($config);
 $order_id = isset($_GET['order']) ? (int)$_GET['order'] : 0;
 
 if (!$order_id) {
@@ -63,14 +64,15 @@ if (isset($_SESSION['temp_order_id'])) {
 $_SESSION['valid_invoice_' . $order_id] = true;
 
 // --- Ziina payment ---
-$payment_method = $_SESSION['payment_method'] ;
-$order_id = $_SESSION['order_id'];
-$grandTotal = $_SESSION['grandTotal'];
-$fullname = $_SESSION['$fullname'];
-$email = $_SESSION['$email'];
 
-if ($payment_method === 'Ziina') {
-send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $email);
+$payment_method = $_SESSION['payment_method'] ?? '';
+$order_id = $_SESSION['order_id'] ?? 0;
+$grandTotal = $_SESSION['grandTotal'] ?? 0;
+$fullname = $_SESSION['fullname'] ?? '';
+$email = $_SESSION['email'] ?? '';
+
+if ($payment_method === 'Ziina' && $order_id && $grandTotal && $fullname && $email) {
+    send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $email);
 }
 
 // Clear session data
@@ -121,7 +123,9 @@ function send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $
     <title>Thank You - AleppoGift</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/thankyou.css">
 
 </head>
 <body class="bg-light">
@@ -185,14 +189,13 @@ function send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $
         </div>
 
         <div class="text-center mt-5">
-            <?php if (file_exists("../invoice/invoice_{$order_id}.pdf")): ?>
-                <!-- <a href="invoice/invoice_<?= $order_id; ?>.pdf" target="_blank" class="btn btn-download mb-3">
-                    <i class="fas fa-file-pdf me-2"></i> Download Invoice
-                </a> -->
-                <!-- Direct download link -->
+            <?php $invoicePath = "../invoice/invoice_{$order_id}.pdf"; ?>
+            <?php if (file_exists($invoicePath)): ?>
                 <a href="download_invoice.php?id=<?= $order_id ?>" target="_blank" class="btn btn-download mb-3">
                     <i class="fas fa-file-pdf me-2"></i> Download Invoice
                 </a>
+            <?php else: ?>
+                <p class="text-danger mb-3">Invoice PDF not found for this order.</p>
             <?php endif; ?>
             <div class="mt-4">
                 <p class="mb-3">Need help with your order?</p>
