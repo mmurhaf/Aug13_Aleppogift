@@ -11,7 +11,8 @@ if (empty($_SESSION['cart'])) {
     exit;
 }
 
-$db = new Database();
+$config = require(__DIR__ . '/../secure_config.php');
+$db = new Database($config);
 $cart = $_SESSION['cart'];
 
 if (empty($_SESSION['csrf_token'])) {
@@ -122,11 +123,21 @@ $order_id = $db->lastInsertId();
             'price' => $price
         ]);
     }
+    // --- Confirmation function ---
+    function send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $email) {
+        sendAdminWhatsApp($order_id, $fullname, $grandTotal, $payment_method);
+
+        ob_start();
+        $invoiceInfo = require('../includes/generate_invoice.php');
+        ob_end_clean();
+        // ...existing code...
+    }
+
     // --- COD immediate confirmation ---
-if (strtoupper($payment_method) === 'COD') {
-    send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $email);
-    exit;
-}
+    if (strtoupper($payment_method) === 'COD') {
+        send_confirmation($order_id, $fullname, $grandTotal, $payment_method, $email);
+        exit;
+    }
 
 // --- Ziina payment ---
 $_SESSION['payment_method'] = $payment_method;

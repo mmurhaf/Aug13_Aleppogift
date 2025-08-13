@@ -3,7 +3,8 @@ session_start();
 require_once(__DIR__ . '/../secure_config.php');
 require_once('../includes/Database.php');
 
-$db = new Database();
+$config = require(__DIR__ . '/../secure_config.php');
+$db = new Database($config);
 
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];

@@ -4,7 +4,8 @@
 require_once(__DIR__ . '/../secure_config.php');
 require_once(__DIR__ . '/../includes/Database.php');
 
-$db = new Database();
+$config = require(__DIR__ . '/../secure_config.php');
+$db = new Database($config);
 
 $country = strtolower(trim($_POST['country'] ?? 'united arab emirates'));
 $city = strtolower(trim($_POST['city'] ?? '_'));

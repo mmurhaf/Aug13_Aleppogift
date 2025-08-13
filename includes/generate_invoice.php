@@ -4,7 +4,8 @@ require_once __DIR__ . '/../vendor/fpdf/fpdf.php';
 require_once __DIR__ . '/../secure_config.php';
 require_once __DIR__ . '/../includes/Database.php';
 
-$db = new Database();
+$config = require(__DIR__ . '/../secure_config.php');
+$db = new Database($config);
 
 
 // Check if order_id is set
@@ -236,7 +237,7 @@ $pdf->Ln(5);
     return [
         'full_path' => $fullPath,
         'public_path' => "invoice/$invoiceFile",
-        'web_url' => SITE_URL . "/invoice/$invoiceFile"
+        'web_url' => $config['SITE_URL'] . "/invoice/$invoiceFile"
     ];
 
 } catch (Exception $e) {

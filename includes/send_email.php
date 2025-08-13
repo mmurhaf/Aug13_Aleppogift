@@ -7,20 +7,21 @@ require_once('../vendor/PHPMailer/src/PHPMailer.php');
 require_once('../vendor/PHPMailer/src/SMTP.php');
 
 function sendInvoiceEmail($to, $order_id, $attachmentPath) {
+    $config = require(__DIR__ . '/../secure_config.php');
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = SMTP_HOST;
+        $mail->Host = $config['SMTP_HOST'];
         $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USERNAME;
-        $mail->Password = SMTP_PASSWORD;
+        $mail->Username = $config['SMTP_USERNAME'];
+        $mail->Password = $config['SMTP_PASSWORD'];
         $mail->SMTPSecure = 'ssl'; // Use 'ssl' for port 465
-        $mail->Port = SMTP_PORT;
+        $mail->Port = $config['SMTP_PORT'];
 
-        $mail->setFrom(EMAIL_FROM, EMAIL_FROM_NAME);
+        $mail->setFrom($config['EMAIL_FROM'], $config['EMAIL_FROM_NAME']);
         $mail->addAddress($to);
-        $mail->addAddress(EMAIL_FROM); // Admin copy
-        $mail->addBCC(EMAIL_FROM);
+        $mail->addAddress($config['EMAIL_FROM']); // Admin copy
+        $mail->addBCC($config['EMAIL_FROM']);
         $mail->addAttachment($attachmentPath);
 
         $mail->isHTML(true);
